@@ -1,0 +1,9 @@
+name: static-website-demo
+metadata:
+  template: custom
+  description: "Static website hosted in Azure Storage Account"
+
+services:
+  web:
+    project: ./src
+    host: storage-static-website
