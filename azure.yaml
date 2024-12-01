@@ -1,9 +1,16 @@
-name: static-website-demo
+name: my-storage-project
 metadata:
-  template: custom
-  description: "Static website hosted in Azure Storage Account"
-
-services:
-  web:
-    project: ./src
-    host: staticwebapp
+  template: false
+  description: "Storage account with text files"
+infra:
+  provider: "bicep"
+  path: "./infra"
+hooks:
+  postdeploy:
+    windows:
+      shell: pwsh
+      run: ./hooks/postdeploy.ps1
+      interactive: true
+      continueOnError: false
+pipeline:
+  provider: "azdo"
