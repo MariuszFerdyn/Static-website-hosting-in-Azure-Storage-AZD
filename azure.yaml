@@ -6,4 +6,4 @@ metadata:
 services:
   web:
     project: ./src
-    host: storage-static-website
+    host: staticwebapp
