@@ -94,6 +94,10 @@
     </style>
 </head>
 <body>
+    <script type="text/javascript">
+        var timerStart = Date.now();
+    </script>
+
     <div class="container">
         <div class="header">
             <h1>Connection Information</h1>
@@ -124,8 +128,12 @@
                 <td id="server-protocol"></td>
             </tr>
             <tr>
-                <td>Page Load Time</td>
-                <td id="page-load-time"></td>
+                <td>Time to DOM Ready</td>
+                <td id="dom-ready-time">Calculating...</td>
+            </tr>
+            <tr>
+                <td>Time to Full Page Load</td>
+                <td id="full-page-load-time">Calculating...</td>
             </tr>
             <tr>
                 <td>Connection Speed</td>
@@ -135,9 +143,6 @@
     </div>
 
     <script>
-        // Measure page load time
-        const pageLoadStart = performance.now();
-
         function updateDateTime() {
             const now = new Date();
             
@@ -157,18 +162,16 @@
             document.getElementById('timestamp').textContent = unixTimestamp;
         }
 
-        function calculatePageLoadTime() {
-            const pageLoadEnd = performance.now();
-            const loadTime = (pageLoadEnd - pageLoadStart).toFixed(2);
-            document.getElementById('page-load-time').textContent = `${loadTime} ms`;
+        function updateConnectionInfo() {
+            document.getElementById('hostname').textContent = window.location.hostname || 'Unknown';
+            document.getElementById('host').textContent = window.location.host || 'Unknown';
+            document.getElementById('invoked-host').textContent = window.location.origin || 'Unknown';
+            document.getElementById('server-protocol').textContent = window.location.protocol.replace(':', '');
         }
 
         function calculateConnectionSpeed() {
             try {
-                // Use Network Information API for connection type
                 const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-                
-                // Performance Navigation Timing API for speed calculation
                 const entries = window.performance.getEntriesByType('navigation');
                 
                 if (entries.length > 0) {
@@ -192,21 +195,24 @@
             }
         }
 
-        function updateConnectionInfo() {
-            document.getElementById('hostname').textContent = window.location.hostname || 'Unknown';
-            document.getElementById('host').textContent = window.location.host || 'Unknown';
-            document.getElementById('invoked-host').textContent = window.location.origin || 'Unknown';
-            document.getElementById('server-protocol').textContent = window.location.protocol.replace(':', '');
-        }
-
         // Update time every second
         updateDateTime();
         setInterval(updateDateTime, 1000);
 
         // Other calculations
         updateConnectionInfo();
-        calculatePageLoadTime();
         calculateConnectionSpeed();
+
+        // DOM Ready and Full Page Load timing
+        document.addEventListener('DOMContentLoaded', function() {
+            const domReadyTime = Date.now() - timerStart;
+            document.getElementById('dom-ready-time').textContent = `${domReadyTime} ms`;
+        });
+
+        window.addEventListener('load', function() {
+            const fullPageLoadTime = Date.now() - timerStart;
+            document.getElementById('full-page-load-time').textContent = `${fullPageLoadTime} ms`;
+        });
     </script>
 </body>
 </html>
