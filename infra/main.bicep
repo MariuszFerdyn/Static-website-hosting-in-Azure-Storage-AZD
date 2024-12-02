@@ -35,3 +35,4 @@ module storageResources './storage.bicep' = {
 // Output the storage account and container names
 output storageAccountName string = storageResources.outputs.storageAccountName
 output containerName string = storageResources.outputs.containerName
+output resourceGroupName string = rg.name

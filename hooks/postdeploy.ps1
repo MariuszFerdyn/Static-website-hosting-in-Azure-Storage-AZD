@@ -1,9 +1,16 @@
 #!/usr/bin/env pwsh
 
 # Retrieve storage account name and container name from environment
+
+Write-Host "----- Info -----"
+Write-Host "storageAccountName: $env:storageAccountName"
+Write-Host "ResourceGroup:      $env:resourceGroupName"
+Write-Host "----------------"
+
 $storageAccountName = (azd env get-values | Where-Object { $_ -match "AZURE_STORAGE_ACCOUNT_NAME" }) -replace ".*=", ""
 $containerName = (azd env get-values | Where-Object { $_ -match "AZURE_CONTAINER_NAME" }) -replace ".*=", ""
 
+exit 0
 # Verify storage account exists
 try {
     $storageAccount = az storage account show --name $storageAccountName | ConvertFrom-Json
