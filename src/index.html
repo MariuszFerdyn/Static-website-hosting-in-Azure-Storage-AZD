@@ -2,81 +2,211 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Server Connection Information</title>
+    <title>Connection Information</title>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --background-color: #ecf0f1;
+            --text-color: #333;
+            --border-color: #bdc3c7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
         }
-        table {
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
+            max-width: 700px;
+            overflow: hidden;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
+
         .header {
+            background-color: var(--primary-color);
+            color: white;
             text-align: center;
-            margin-bottom: 30px;
+            padding: 15px;
+            font-weight: 300;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .info-table tr {
+            transition: background-color 0.3s ease;
+        }
+
+        .info-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .info-table tr:hover {
+            background-color: #f1f3f4;
+        }
+
+        .info-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-table td:first-child {
+            font-weight: 600;
+            color: var(--secondary-color);
+            width: 40%;
+        }
+
+        .info-table td:last-child {
+            text-align: right;
+            color: #555;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 0 10px;
+            }
         }
     </style>
-    <script>
-        function updateServerInfo() {
-            const now = new Date();
-            document.getElementById('current-time').textContent = now.toLocaleString();
-            document.getElementById('timestamp').textContent = Math.floor(now.getTime() / 1000);
-        }
-        
-        // Update time immediately and then every second
-        updateServerInfo();
-        setInterval(updateServerInfo, 1000);
-    </script>
 </head>
 <body>
-    <div class="header">
-        <h1>Server Connection Information</h1>
+    <div class="container">
+        <div class="header">
+            <h1>Connection Information</h1>
+        </div>
+        <table class="info-table">
+            <tr>
+                <td>Current Time</td>
+                <td id="current-time"></td>
+            </tr>
+            <tr>
+                <td>Timestamp (Unix)</td>
+                <td id="timestamp"></td>
+            </tr>
+            <tr>
+                <td>Hostname</td>
+                <td id="hostname"></td>
+            </tr>
+            <tr>
+                <td>Host</td>
+                <td id="host"></td>
+            </tr>
+            <tr>
+                <td>Invoked Host</td>
+                <td id="invoked-host"></td>
+            </tr>
+            <tr>
+                <td>Server Protocol</td>
+                <td id="server-protocol"></td>
+            </tr>
+            <tr>
+                <td>Page Load Time</td>
+                <td id="page-load-time"></td>
+            </tr>
+            <tr>
+                <td>Connection Speed</td>
+                <td id="connection-speed">Calculating...</td>
+            </tr>
+        </table>
     </div>
 
-    <table>
-        <tr>
-            <th>Parameter</th>
-            <th>Value</th>
-        </tr>
-        <tr>
-            <td>Current Time</td>
-            <td id="current-time"></td>
-        </tr>
-        <tr>
-            <td>Timestamp (Unix)</td>
-            <td id="timestamp"></td>
-        </tr>
-        <tr>
-            <td>Server Software</td>
-            <td>Web Server (HTML)</td>
-        </tr>
-        <tr>
-            <td>Host</td>
-            <td>localhost</td>
-        </tr>
-        <tr>
-            <td>Server Protocol</td>
-            <td>HTTP/1.1</td>
-        </tr>
-        <tr>
-            <td>Request Method</td>
-            <td>GET</td>
-        </tr>
-    </table>
+    <script>
+        // Measure page load time
+        const pageLoadStart = performance.now();
 
-    <p><small>Note: This is a static HTML representation of server connection information.</small></p>
+        function updateDateTime() {
+            const now = new Date();
+            
+            const formattedTime = now.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            
+            const unixTimestamp = Math.floor(now.getTime() / 1000);
+            
+            document.getElementById('current-time').textContent = formattedTime;
+            document.getElementById('timestamp').textContent = unixTimestamp;
+        }
+
+        function calculatePageLoadTime() {
+            const pageLoadEnd = performance.now();
+            const loadTime = (pageLoadEnd - pageLoadStart).toFixed(2);
+            document.getElementById('page-load-time').textContent = `${loadTime} ms`;
+        }
+
+        function calculateConnectionSpeed() {
+            try {
+                // Use Network Information API for connection type
+                const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                
+                // Performance Navigation Timing API for speed calculation
+                const entries = window.performance.getEntriesByType('navigation');
+                
+                if (entries.length > 0) {
+                    const navigation = entries[0];
+                    
+                    const downloadSpeed = navigation.transferSize 
+                        ? (navigation.transferSize / (navigation.loadEventEnd - navigation.startTime) * 1000 / 1024).toFixed(2) 
+                        : 'N/A';
+                    
+                    const connectionType = connection 
+                        ? connection.effectiveType 
+                        : 'Unknown';
+                    
+                    document.getElementById('connection-speed').textContent = 
+                        `${downloadSpeed} KB/s (${connectionType} connection)`;
+                } else {
+                    document.getElementById('connection-speed').textContent = 'Unable to calculate';
+                }
+            } catch (error) {
+                document.getElementById('connection-speed').textContent = 'Error calculating';
+            }
+        }
+
+        function updateConnectionInfo() {
+            document.getElementById('hostname').textContent = window.location.hostname || 'Unknown';
+            document.getElementById('host').textContent = window.location.host || 'Unknown';
+            document.getElementById('invoked-host').textContent = window.location.origin || 'Unknown';
+            document.getElementById('server-protocol').textContent = window.location.protocol.replace(':', '');
+        }
+
+        // Update time every second
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Other calculations
+        updateConnectionInfo();
+        calculatePageLoadTime();
+        calculateConnectionSpeed();
+    </script>
 </body>
 </html>
