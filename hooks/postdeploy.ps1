@@ -1,14 +1,22 @@
 #!/usr/bin/env pwsh
 
 # Retrieve storage account name and container name from environment
-
+$SA=($env:storageAccountName)
+$RG=($env:resourceGroupName)
+$SB=($env:AZURE_SUBSCRIPTION_ID)
 Write-Host "----- Info -----"
-Write-Host "storageAccountName: $env:storageAccountName"
-Write-Host "ResourceGroup:      $env:resourceGroupName"
+Write-Host "storageAccountName: $SA"
+Write-Host "ResourceGroup:      $RG"
+Write-Host "Subscryption:       $SB"
 Write-Host "----------------"
 
-$storageAccountName = (azd env get-values | Where-Object { $_ -match "AZURE_STORAGE_ACCOUNT_NAME" }) -replace ".*=", ""
-$containerName = (azd env get-values | Where-Object { $_ -match "AZURE_CONTAINER_NAME" }) -replace ".*=", ""
+Set-AzContext -Subscription $SB
+$storageAccount = Get-AzStorageAccount -ResourceGroupName $RG -AccountName $SA
+$ctx = $storageAccount.Context
+
+Get-ChildItem -File -Recurse -Path "../src"
+Get-ChildItem -File -Recurse -Path "../src" | Set-AzStorageBlobContent -Context $ctx -Container '$web' -Properties @{'ContentType' = 'text/html'} -Force 
+
 
 exit 0
 # Verify storage account exists
