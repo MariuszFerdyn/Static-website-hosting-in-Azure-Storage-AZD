@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Server Connection Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+    </style>
+    <script>
+        function updateServerInfo() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleString();
+            document.getElementById('timestamp').textContent = Math.floor(now.getTime() / 1000);
+        }
+        
+        // Update time immediately and then every second
+        updateServerInfo();
+        setInterval(updateServerInfo, 1000);
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>Server Connection Information</h1>
+    </div>
+
+    <table>
+        <tr>
+            <th>Parameter</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Current Time</td>
+            <td id="current-time"></td>
+        </tr>
+        <tr>
+            <td>Timestamp (Unix)</td>
+            <td id="timestamp"></td>
+        </tr>
+        <tr>
+            <td>Server Software</td>
+            <td>Web Server (HTML)</td>
+        </tr>
+        <tr>
+            <td>Host</td>
+            <td>localhost</td>
+        </tr>
+        <tr>
+            <td>Server Protocol</td>
+            <td>HTTP/1.1</td>
+        </tr>
+        <tr>
+            <td>Request Method</td>
+            <td>GET</td>
+        </tr>
+    </table>
+
+    <p><small>Note: This is a static HTML representation of server connection information.</small></p>
+</body>
+</html>

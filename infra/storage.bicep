@@ -10,7 +10,9 @@ param environmentName string
 param tags object
 
 @description('The name of the storage account')
-var storageAccountName = 'st${environmentName}${uniqueString(resourceGroup().id)}'
+@minLength(3)
+@maxLength(24)
+param storageAccountName string = replace('strg${environmentName}', '-', '')
 
 @allowed([
   'Standard_LRS'
@@ -24,15 +26,6 @@ param storageSku string = 'Standard_LRS'
 @description('The path to the web index document.')
 param indexDocumentPath string = 'index.html'
 
-@description('The contents of the web index document.')
-param indexDocumentContents string = '<h1>Example static website</h1>'
-
-@description('The path to the web error document.')
-param errorDocument404Path string = 'error.html'
-
-@description('The contents of the web error document.')
-param errorDocument404Contents string = '<h1>Example 404 error page</h1>'
-
 resource contributorRoleDefinition 'Microsoft.Authorization/roleDefinitions@2018-01-01-preview' existing = {
   scope: subscription()
   // This is the Storage Account Contributor role, which is the minimum role permission we can give. See https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#:~:text=17d1049b-9a84-46fb-8f53-869881c3d3ab
@@ -43,6 +36,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   name: storageAccountName
   location: location
   kind: 'StorageV2'
+  tags: tags
   sku: {
     name: storageSku
   }
@@ -51,6 +45,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
 resource managedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
   name: 'DeploymentScript'
   location: location
+  tags: tags
 }
 
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
@@ -67,6 +62,7 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'deploymentScript'
   location: location
   kind: 'AzurePowerShell'
+  tags: tags
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {

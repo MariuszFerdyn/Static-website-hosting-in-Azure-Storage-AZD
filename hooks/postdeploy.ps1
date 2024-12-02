@@ -4,18 +4,22 @@
 $SA=($env:storageAccountName)
 $RG=($env:resourceGroupName)
 $SB=($env:AZURE_SUBSCRIPTION_ID)
-Write-Host "----- Info -----"
-Write-Host "storageAccountName: $SA"
-Write-Host "ResourceGroup:      $RG"
-Write-Host "Subscryption:       $SB"
-Write-Host "----------------"
+Write-Host "--------------- Info 01 ---------------"
+Write-Host "storageAccountName : $SA"
+Write-Host "ResourceGroup      : $RG"
+Write-Host "Subscryption       : $SB"
+Write-Host "---------------------------------------"
 
 Set-AzContext -Subscription $SB
 $storageAccount = Get-AzStorageAccount -ResourceGroupName $RG -AccountName $SA
 $ctx = $storageAccount.Context
 
-Get-ChildItem -File -Recurse -Path "../src"
-Get-ChildItem -File -Recurse -Path "../src" | Set-AzStorageBlobContent -Context $ctx -Container '$web' -Properties @{'ContentType' = 'text/html'} -Force 
+Write-Host "--------------- Info 02 ---------------"
+Write-Host "storageAccount    : $storageAccount"
+Write-Host "ctx               : $ctx"
+Write-Host "---------------------------------------"
+
+Get-ChildItem -File -Recurse -Path "./src" | Set-AzStorageBlobContent -Context $ctx -Container '$web' -Properties @{'ContentType' = 'text/html'} -Force 
 
 
 exit 0
