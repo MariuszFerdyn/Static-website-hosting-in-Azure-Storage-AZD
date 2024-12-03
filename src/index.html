@@ -140,10 +140,6 @@
                 <td>Time to Full Page Load</td>
                 <td id="full-page-load-time">Calculating...</td>
             </tr>
-            <tr>
-                <td>Connection Speed (Browser API)</td>
-                <td id="connection-speed">Calculating...</td>
-            </tr>
             <tr class="speed-test-row">
                 <td>Speed Test (bps)</td>
                 <td id="speed-bps">Running test...</td>
@@ -190,32 +186,6 @@
             document.getElementById('server-protocol').textContent = window.location.protocol.replace(':', '');
         }
 
-        function calculateConnectionSpeed() {
-            try {
-                const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-                const entries = window.performance.getEntriesByType('navigation');
-                
-                if (entries.length > 0) {
-                    const navigation = entries[0];
-                    
-                    const downloadSpeed = navigation.transferSize 
-                        ? (navigation.transferSize / (navigation.loadEventEnd - navigation.startTime) * 1000 / 1024).toFixed(2) 
-                        : 'N/A';
-                    
-                    const connectionType = connection 
-                        ? connection.effectiveType 
-                        : 'Unknown';
-                    
-                    document.getElementById('connection-speed').textContent = 
-                        `${downloadSpeed} KB/s (${connectionType} connection)`;
-                } else {
-                    document.getElementById('connection-speed').textContent = 'Unable to calculate';
-                }
-            } catch (error) {
-                document.getElementById('connection-speed').textContent = 'Error calculating';
-            }
-        }
-
         function MeasureConnectionSpeed() {
             var startTime, endTime;
             var download = new Image();
@@ -255,7 +225,6 @@
 
         // Other calculations
         updateConnectionInfo();
-        calculateConnectionSpeed();
 
         // DOM Ready and Full Page Load timing
         document.addEventListener('DOMContentLoaded', function() {
