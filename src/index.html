@@ -86,6 +86,11 @@
             color: #555;
         }
 
+        .speed-test-row {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
         @media (max-width: 600px) {
             .container {
                 margin: 0 10px;
@@ -136,13 +141,29 @@
                 <td id="full-page-load-time">Calculating...</td>
             </tr>
             <tr>
-                <td>Connection Speed</td>
+                <td>Connection Speed (Browser API)</td>
                 <td id="connection-speed">Calculating...</td>
+            </tr>
+            <tr class="speed-test-row">
+                <td>Speed Test (bps)</td>
+                <td id="speed-bps">Running test...</td>
+            </tr>
+            <tr class="speed-test-row">
+                <td>Speed Test (kbps)</td>
+                <td id="speed-kbps">Running test...</td>
+            </tr>
+            <tr class="speed-test-row">
+                <td>Speed Test (Mbps)</td>
+                <td id="speed-mbps">Running test...</td>
             </tr>
         </table>
     </div>
 
     <script>
+        // Configuration for speed test
+        var imageAddr = "https://upload.wikimedia.org/wikipedia/commons/3/3a/Bloemen_van_adderwortel_%28Persicaria_bistorta%2C_synoniem%2C_Polygonum_bistorta%29_06-06-2021._%28d.j.b%29.jpg"; 
+        var downloadSize = 7300000; // bytes
+
         function updateDateTime() {
             const now = new Date();
             
@@ -195,6 +216,39 @@
             }
         }
 
+        function MeasureConnectionSpeed() {
+            var startTime, endTime;
+            var download = new Image();
+            
+            download.onload = function () {
+                endTime = (new Date()).getTime();
+                showResults();
+            }
+            
+            download.onerror = function (err, msg) {
+                document.getElementById('speed-bps').textContent = 'Test failed';
+                document.getElementById('speed-kbps').textContent = 'Test failed';
+                document.getElementById('speed-mbps').textContent = 'Test failed';
+            }
+            
+            startTime = (new Date()).getTime();
+            var cacheBuster = "?nnn=" + startTime;
+            download.src = imageAddr + cacheBuster;
+            
+            function showResults() {
+                var duration = (endTime - startTime) / 1000;
+                var bitsLoaded = downloadSize * 8;
+                var speedBps = (bitsLoaded / duration).toFixed(2);
+                var speedKbps = (speedBps / 1024).toFixed(2);
+                var speedMbps = (speedKbps / 1024).toFixed(2);
+
+                // Update results
+                document.getElementById('speed-bps').textContent = speedBps + " bps";
+                document.getElementById('speed-kbps').textContent = speedKbps + " kbps";
+                document.getElementById('speed-mbps').textContent = speedMbps + " Mbps";
+            }
+        }
+
         // Update time every second
         updateDateTime();
         setInterval(updateDateTime, 1000);
@@ -212,6 +266,9 @@
         window.addEventListener('load', function() {
             const fullPageLoadTime = Date.now() - timerStart;
             document.getElementById('full-page-load-time').textContent = `${fullPageLoadTime} ms`;
+            
+            // Start speed test automatically
+            MeasureConnectionSpeed();
         });
     </script>
 </body>
